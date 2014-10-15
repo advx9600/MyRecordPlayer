@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.my.recordplayer.MainActivity" >
+
+     <item
+        android:id="@+id/action_open"
+        android:orderInCategory="100"
+        android:showAsAction="always" 
+        android:icon="@drawable/open_file"
+        android:title="@string/action_open"/>
+     
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>

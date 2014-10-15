@@ -1,0 +1,18 @@
+  FileSelectionActivity.java
+  
+  public static final String  EXTRA_SET_PATH="set_path";
+  
+    private void setExtraData(){
+    	String path=getIntent().getStringExtra(EXTRA_SET_PATH);
+    	if (path == null || path.length()==0){
+    		mainPath = new File(Environment.getExternalStorageDirectory()+"");
+    	}else{
+    		mainPath = new File(path);
+    	}
+    }
+    
+    
+   directoryView.setOnItemClickListener add   to direct return 
+  				 else{
+                    	ok();
+                    }
