@@ -3,4 +3,4 @@ MyRecordPlayer
 
 android recorder player
 
-![screenshot](https://github.com/advx9600/MyRecordPlayer/master/screenshort.pnp)
+![screenshot](https://raw.githubusercontent.com/advx9600/MyRecordPlayer/master/screenshort.pnp)
