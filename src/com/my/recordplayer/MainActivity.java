@@ -36,7 +36,7 @@ public class MainActivity extends Activity implements MainActivityInt {
 	private SharedPreferences mSharedpreferences;
 	public static final String MyPREFERENCES = "MyPrefs";
 	private static final String PREF_PATH = "path";
-	private static final String PREF_HISTORY = "history";
+	private static final String PREF_HISTORY_FILE = "history";
 
 	private MediaPlayer mMediaPlayer = new MediaPlayer();
 	private LinearLayout mLayoutSeekBars;
@@ -59,7 +59,8 @@ public class MainActivity extends Activity implements MainActivityInt {
 				Context.MODE_PRIVATE);
 		mLayoutSeekBars = (LinearLayout) findViewById(R.id.layout_seekbars);
 		mTextHistory = (TextView) (findViewById(R.id.text_history));
-		mTextHistory.setText(mSharedpreferences.getString(PREF_HISTORY, ""));
+		mTextHistory.setText(mSharedpreferences
+				.getString(PREF_HISTORY_FILE, ""));
 	}
 
 	@Override
@@ -85,7 +86,22 @@ public class MainActivity extends Activity implements MainActivityInt {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_next_sing) {
+			try {
+				File files = new File(mSharedpreferences.getString(PREF_PATH,
+						""));
+				for (int i = 0; i < files.listFiles().length - 1; i++) {
+					File file = files.listFiles()[i];
+					if (file.getName()
+							.equals(mSharedpreferences.getString(
+									PREF_HISTORY_FILE, ""))) {
+						playFile(files.listFiles()[i + 1]);
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return true;
 		}
 		if (id == R.id.action_open) {
@@ -113,50 +129,59 @@ public class MainActivity extends Activity implements MainActivityInt {
 			ArrayList<File> Files = (ArrayList<File>) data
 					.getSerializableExtra("upload");
 			for (File file : Files) {
-				mSharedpreferences.edit()
-						.putString(PREF_PATH, file.getParent()).commit();
-				mSharedpreferences.edit()
-						.putString(PREF_HISTORY, file.getName()).commit();
-				// a.b(file.getAbsolutePath());
-				mTextHistory.setVisibility(View.GONE);
-				try {
-
-					if (mMediaPlayer.isPlaying()) {
-						mMediaPlayer.stop();
-					}
-					mMediaPlayer.release();
-
-					mMediaPlayer = new MediaPlayer();
-					mMediaPlayer.setDataSource(file.getAbsolutePath());
-					mMediaPlayer.prepare();
-					mMediaPlayer.start();
-					a.b("duration:" + mMediaPlayer.getDuration());
-					if (mListSeekBars.size() == 0) {
-						for (int i = 0; i < 8; i++) {
-							SeekBar sb = new SeekBar(this);
-							sb.setMax(100);
-							sb.setOnSeekBarChangeListener(new c(i, this));
-							mListSeekBars.add(sb);
-							LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-									LayoutParams.MATCH_PARENT,
-									LayoutParams.WRAP_CONTENT);
-							lp.setMargins(0, 20, 0, 0);
-							mLayoutSeekBars.addView(sb, lp);
-						}
-
-						new SeekBarHandler().execute();
-
-						Button btn = (Button) findViewById(R.id.btn_control);
-						btn.setOnClickListener(new b(this));
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				playFile(file);
 				break; // only radio checked
 			}
 		}
 
+	}
+
+	private void playFile(File file) {
+		if (file == null) {
+			return;
+		}
+		
+		mSharedpreferences.edit().putString(PREF_PATH, file.getParent())
+				.commit();
+		mSharedpreferences.edit().putString(PREF_HISTORY_FILE, file.getName())
+				.commit();
+		// a.b(file.getAbsolutePath());
+		mTextHistory.setVisibility(View.GONE);
+		try {
+			if (mMediaPlayer != null) {
+				if (mMediaPlayer.isPlaying()) {
+					mMediaPlayer.stop();
+				}
+				mMediaPlayer.release();
+			}
+
+			mMediaPlayer = new MediaPlayer();
+			mMediaPlayer.setDataSource(file.getAbsolutePath());
+			mMediaPlayer.prepare();
+			mMediaPlayer.start();
+			a.b("duration:" + mMediaPlayer.getDuration());
+			if (mListSeekBars.size() == 0) {
+				for (int i = 0; i < 8; i++) {
+					SeekBar sb = new SeekBar(this);
+					sb.setMax(100);
+					sb.setOnSeekBarChangeListener(new c(i, this));
+					mListSeekBars.add(sb);
+					LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+							LayoutParams.MATCH_PARENT,
+							LayoutParams.WRAP_CONTENT);
+					lp.setMargins(0, 20, 0, 0);
+					mLayoutSeekBars.addView(sb, lp);
+				}
+
+				new SeekBarHandler().execute();
+
+				Button btn = (Button) findViewById(R.id.btn_control);
+				btn.setOnClickListener(new b(this));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
