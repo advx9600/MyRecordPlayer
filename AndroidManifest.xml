@@ -19,7 +19,7 @@
         <activity android:name="paul.arian.fileselector.FileSelectionActivity" />
         <activity android:name="paul.arian.fileselector.FolderSelectionActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MyAudioActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

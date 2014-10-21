@@ -7,5 +7,11 @@
     <string name="action_open">打开</string>
     <string name="pause">暂停</string>
     <string name="play">播放</string>
-	<string name="next_song">下一曲</string>
+    <string name="next_song">下一曲</string>
+    <string name="zoom_in_or_restore">放大或还原</string>
+    <string name="cur_song">当前曲目</string>
+    <string name="play_cur_song">播放当前曲目</string>
+    <string name="select_progress_bar_start_end_area">请在滑动条上选择开始和结束区域</string>
+    <string name="already_to_normal_model">已经回去平常模式</string>
+
 </resources>
