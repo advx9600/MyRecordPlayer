@@ -44,11 +44,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private List<SeekBar> mListSeekBars = new ArrayList<SeekBar>();
 
 	private TextView mTextHistory;
-
-	public static final long STATUS_NORMAL = 0x1;
-	public static final long STATUS_ZOOM_OUT = (0x1 << 1);
-	public static final long STATUS_USER_PROGRESSBAR = (0x1 << 2);
-	public static final long STATUS_ALREADY_OPEN_FILE = (0x1 << 3);
+	
 
 	private long mStatus = STATUS_NORMAL;
 
