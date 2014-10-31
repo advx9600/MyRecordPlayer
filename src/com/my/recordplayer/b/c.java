@@ -1,17 +1,11 @@
 package com.my.recordplayer.b;
 
-import paul.arian.fileselector.a;
 
 import com.my.recordplayer.MyAudioActivity;
 import com.my.recordplayer.MyAudioActivityInt;
-import com.my.recordplayer.R;
 
-import android.media.MediaPlayer;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 
 public class c implements OnSeekBarChangeListener {
 	private int mNum;

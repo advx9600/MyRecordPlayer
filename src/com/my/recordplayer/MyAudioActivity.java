@@ -12,17 +12,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -44,7 +41,6 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private List<SeekBar> mListSeekBars = new ArrayList<SeekBar>();
 
 	private TextView mTextHistory;
-	
 
 	private long mStatus = STATUS_NORMAL;
 
@@ -55,7 +51,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		super.onCreate(savedInstanceState);
 		// setContentView(R.layout.activity_main);
 		setContentView(R.layout.fragment_main);
-
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		// if (savedInstanceState == null) {
 		// getFragmentManager().beginTransaction()
 		// .add(R.id.container, new PlaceholderFragment()).commit();
@@ -292,7 +288,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			if (perDouble > 99.0) {
 				perDouble = 99.0;
 			}
-//			a.b("perDouble:" + perDouble);
+			// a.b("perDouble:" + perDouble);
 			mMediaPlayer
 					.seekTo((int) (mMediaPlayer.getDuration() * perDouble / 100));
 			if (!mMediaPlayer.isPlaying()) {
