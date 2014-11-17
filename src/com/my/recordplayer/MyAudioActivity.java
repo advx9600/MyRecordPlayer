@@ -31,6 +31,7 @@ import paul.arian.fileselector.FileSelectionActivity;
 public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private boolean mIsExist = false;
 
+	private boolean mIsLockMediaPlayer = false;
 	private SharedPreferences mSharedpreferences;
 	public static final String MyPREFERENCES = "MyPrefs";
 	private static final String PREF_PATH = "path";
@@ -185,6 +186,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 
 		mTextHistory.setVisibility(View.GONE);
 		try {
+			mIsLockMediaPlayer=true;
 			if (mMediaPlayer != null) {
 				if (mMediaPlayer.isPlaying()) {
 					mMediaPlayer.stop();
@@ -219,6 +221,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			mIsLockMediaPlayer=false;
 		}
 	}
 
@@ -330,9 +334,9 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			// seekBar.setProgress(mMediaPlayer.getCurrentPosition());
 			// a.b("getCurrentPosition:" + mMediaPlayer.getCurrentPosition()
 			// + ",getDuration:" + mMediaPlayer.getDuration());
-			if (mMediaPlayer == null) {
+			if (mMediaPlayer == null || mIsLockMediaPlayer) {
 				return;
-			}
+			}			
 			setPercent(
 					mMediaPlayer.getCurrentPosition() * 100.0
 							/ mMediaPlayer.getDuration(), false);
