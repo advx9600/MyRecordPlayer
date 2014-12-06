@@ -158,6 +158,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 				FileSelectionActivity.class);
 		intent.putExtra(FileSelectionActivity.EXTRA_SET_PATH,
 				mSharedpreferences.getString(PREF_PATH, ""));
+		intent.putExtra(FileSelectionActivity.EXTRA_SET_FILE,
+				mSharedpreferences.getString(PREF_HISTORY_FILE, ""));
 		startActivityForResult(intent, FILE_SELECT_CODE);
 	}
 
@@ -184,9 +186,10 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		mSharedpreferences.edit().putString(PREF_HISTORY_FILE, file.getName())
 				.commit();
 
+		setTitle(file.getName());
 		mTextHistory.setVisibility(View.GONE);
 		try {
-			mIsLockMediaPlayer=true;
+			mIsLockMediaPlayer = true;
 			if (mMediaPlayer != null) {
 				if (mMediaPlayer.isPlaying()) {
 					mMediaPlayer.stop();
@@ -221,8 +224,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally{
-			mIsLockMediaPlayer=false;
+		} finally {
+			mIsLockMediaPlayer = false;
 		}
 	}
 
@@ -336,7 +339,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			// + ",getDuration:" + mMediaPlayer.getDuration());
 			if (mMediaPlayer == null || mIsLockMediaPlayer) {
 				return;
-			}			
+			}
 			setPercent(
 					mMediaPlayer.getCurrentPosition() * 100.0
 							/ mMediaPlayer.getDuration(), false);
