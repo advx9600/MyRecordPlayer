@@ -8,6 +8,7 @@
     <string name="pause">暂停</string>
     <string name="play">播放</string>
     <string name="next_song">下一曲</string>
+    <string name="pre_song">上一曲</string>
     <string name="zoom_in_or_restore">放大或还原</string>
     <string name="cur_song">当前曲目</string>
     <string name="play_cur_song">播放当前曲目</string>

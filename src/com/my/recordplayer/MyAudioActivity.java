@@ -37,7 +37,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private static final String PREF_PATH = "path";
 	private static final String PREF_HISTORY_FILE = "history";
 
-	private MediaPlayer mMediaPlayer = new MediaPlayer();
+	private MediaPlayer mMediaPlayer = null;
 	private LinearLayout mLayoutSeekBars;
 	private List<SeekBar> mListSeekBars = new ArrayList<SeekBar>();
 
@@ -64,15 +64,20 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		mTextHistory = (TextView) (findViewById(R.id.text_history));
 		mTextHistory.setText(mSharedpreferences
 				.getString(PREF_HISTORY_FILE, ""));
+
+		Button btn = (Button) findViewById(R.id.btn_control);
+		new b(this, btn);
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		mIsExist = true;
-		if (mMediaPlayer.isPlaying())
-			mMediaPlayer.stop();
-		mMediaPlayer.release();
+		if (mMediaPlayer != null) {
+			if (mMediaPlayer.isPlaying())
+				mMediaPlayer.stop();
+			mMediaPlayer.release();
+		}
 	}
 
 	@Override
@@ -89,40 +94,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_next_sing) {
-			try {
-				File files = new File(mSharedpreferences.getString(PREF_PATH,
-						""));
-				for (int i = 0; i < files.listFiles().length - 1; i++) {
-					File file = files.listFiles()[i];
-					if (file.getName()
-							.equals(mSharedpreferences.getString(
-									PREF_HISTORY_FILE, ""))) {
-						playFile(files.listFiles()[i + 1]);
-						break;
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return true;
-		}
 		if (id == R.id.action_open) {
 			showFileChooser();
-			return true;
-		}
-		if (id == R.id.action_play_cur_sing) {
-			try {
-				String path = mSharedpreferences.getString(PREF_PATH, "");
-				if (path == null || path.length() == 0) {
-					return true;
-				}
-				File file = new File(path + "/"
-						+ mSharedpreferences.getString(PREF_HISTORY_FILE, ""));
-				playFile(file);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 			return true;
 		}
 		if (id == R.id.action_zoom_in) {
@@ -217,8 +190,6 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 
 				new SeekBarHandler().execute();
 
-				Button btn = (Button) findViewById(R.id.btn_control);
-				btn.setOnClickListener(new b(this));
 				setStatus(STATUS_ALREADY_OPEN_FILE);
 			}
 		} catch (Exception e) {
@@ -388,6 +359,42 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			return false;
 		}
 		return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public void playCur() {
+		// TODO Auto-generated method stub
+		playFileDirection(0);
+	}
+
+	@Override
+	public void playPre() {
+		// TODO Auto-generated method stub
+		playFileDirection(-1);
+	}
+
+	@Override
+	public void playNext() {
+		// TODO Auto-generated method stub
+		playFileDirection(1);
+	}
+
+	private void playFileDirection(int dir) {
+		try {
+			File files = new File(mSharedpreferences.getString(PREF_PATH, ""));
+			for (int i = 0; i < files.listFiles().length - 1; i++) {
+				File file = files.listFiles()[i];
+				if (file.getName().equals(
+						mSharedpreferences.getString(PREF_HISTORY_FILE, ""))) {
+					if (i + dir > -1 && i + dir < files.listFiles().length) {
+						playFile(files.listFiles()[i + dir]);
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// public static class PlaceholderFragment extends Fragment {

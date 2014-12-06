@@ -13,4 +13,8 @@ public interface MyAudioActivityInt {
 	public MediaPlayer getMediaPlayer();
 
 	public void setStatus(long status);
+	
+	public void playCur();
+	public void playPre();
+	public void playNext();
 }
