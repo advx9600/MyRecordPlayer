@@ -352,11 +352,15 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	}
 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if ((mStatus & STATUS_ZOOM_OUT) > 0) {
-			setStatus(~STATUS_ZOOM_OUT);
-			Toast.makeText(this, R.string.already_to_normal_model,
-					Toast.LENGTH_LONG).show();
-			return false;
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			if ((mStatus & STATUS_ZOOM_OUT) > 0) {
+				setStatus(~STATUS_ZOOM_OUT);
+				Toast.makeText(this, R.string.already_to_normal_model,
+						Toast.LENGTH_LONG).show();
+				return false;
+			}
+			break;
 		}
 		return super.onKeyUp(keyCode, event);
 	}
