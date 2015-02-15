@@ -193,12 +193,12 @@ public class BtnTouchListener implements View.OnTouchListener {
 			if (Math.abs(deltaX) > mViewWidth / 2) {
 				swipe = true;
 				swipeRight = deltaX > 0;				
-			} else if (mMinFlingVelocity <= velocityX
+			} /*else if (mMinFlingVelocity <= velocityX
 					&& velocityX <= mMaxFlingVelocity) {
 				swipe = true;
 				swipeRight = (motionEvent.getRawX() - mDownX) > 0 ? true
 						: false;
-			}
+			}*/
 			if (swipe) {
 				// sufficent swipe value
 				final View downView = mDownView; // mDownView gets null'd before
