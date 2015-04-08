@@ -17,4 +17,7 @@ public interface MyAudioActivityInt {
 	public void playCur();
 	public void playPre();
 	public void playNext();
+	
+	public void setWakelock(boolean acquire,boolean isUserOps);
+	public boolean getWakLockAcquire();
 }

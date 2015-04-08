@@ -3,9 +3,12 @@ package com.my.recordplayer.widget;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.os.Handler;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -41,6 +44,35 @@ public class BtnTouchListener implements View.OnTouchListener {
 	private String mBtnText;
 	private String mTextRight;
 	private String mTextLeft;
+	private boolean mWaitDouble = true;
+	private final int DOUBLE_CLICK_TIME = 200;
+
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 1:
+				if (mWaitDouble == false){
+					mWaitDouble=true;
+					mCallback.onClick(mButton, null);
+				}
+				break;
+			}
+			super.handleMessage(msg);
+		}
+	};
+
+	private class ClickJudgeThread extends Thread {
+		@Override
+		public void run() {
+			try {
+				sleep(DOUBLE_CLICK_TIME);
+				handler.sendEmptyMessage(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	};
 
 	/**
 	 * The callback interface used by {@link BtnTouchListener} to inform its
@@ -61,6 +93,8 @@ public class BtnTouchListener implements View.OnTouchListener {
 		void onSwipeRight(Button btn, int[] reverseSortedPositions);
 
 		void onClick(Button btn, int[] reverseSortedPositions);
+
+		void onDoubleClick(Button btn, int[] reverseSortedPositions);
 	}
 
 	/**
@@ -192,13 +226,12 @@ public class BtnTouchListener implements View.OnTouchListener {
 
 			if (Math.abs(deltaX) > mViewWidth / 2) {
 				swipe = true;
-				swipeRight = deltaX > 0;				
-			} /*else if (mMinFlingVelocity <= velocityX
-					&& velocityX <= mMaxFlingVelocity) {
-				swipe = true;
-				swipeRight = (motionEvent.getRawX() - mDownX) > 0 ? true
-						: false;
-			}*/
+				swipeRight = deltaX > 0;
+			} /*
+			 * else if (mMinFlingVelocity <= velocityX && velocityX <=
+			 * mMaxFlingVelocity) { swipe = true; swipeRight =
+			 * (motionEvent.getRawX() - mDownX) > 0 ? true : false; }
+			 */
 			if (swipe) {
 				// sufficent swipe value
 				final View downView = mDownView; // mDownView gets null'd before
@@ -223,7 +256,13 @@ public class BtnTouchListener implements View.OnTouchListener {
 						.setDuration(mAnimationTime).setListener(null);
 			}
 			if (!mSwiping) {
-				mCallback.onClick(mButton, null);
+				if (mWaitDouble == true) {
+					mWaitDouble = false;
+					new ClickJudgeThread().start();
+				} else {
+					mWaitDouble = true;
+					mCallback.onDoubleClick(mButton, null);
+				}				
 			}
 			mVelocityTracker = null;
 			mDownX = 0;

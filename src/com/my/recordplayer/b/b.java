@@ -1,8 +1,11 @@
 package com.my.recordplayer.b;
 
+import paul.arian.fileselector.a;
+
 import com.my.recordplayer.MyAudioActivityInt;
 import com.my.recordplayer.R;
 import com.my.recordplayer.widget.BtnTouchListener;
+
 import android.widget.Button;
 
 public class b {
@@ -42,6 +45,13 @@ public class b {
 							mMainActivity.getMediaPlayer().start();
 							(btn).setText(R.string.pause);
 						}
+					}
+
+					@Override
+					public void onDoubleClick(Button btn,
+							int[] reverseSortedPositions) {
+						// TODO Auto-generated method stub
+						mMainActivity.setWakelock(!mMainActivity.getWakLockAcquire(), true);
 					}
 				}, btn.getContext().getString(R.string.next_song), btn
 						.getContext().getString(R.string.pre_song));

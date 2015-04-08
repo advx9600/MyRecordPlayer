@@ -16,11 +16,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -37,6 +40,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private static final String PREF_PATH = "path";
 	private static final String PREF_HISTORY_FILE = "history";
 
+	private static final String TAG = "MyRecordPlayer";
+
 	private MediaPlayer mMediaPlayer = null;
 	private LinearLayout mLayoutSeekBars;
 	private List<SeekBar> mListSeekBars = new ArrayList<SeekBar>();
@@ -46,6 +51,9 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private long mStatus = STATUS_NORMAL;
 
 	public List<d> mListZoom = new ArrayList<d>();
+
+	private WakeLock mWakelock;
+	private boolean isWakeAcquire = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +75,10 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 
 		Button btn = (Button) findViewById(R.id.btn_control);
 		new b(this, btn);
+
+		mWakelock = ((PowerManager) getSystemService(POWER_SERVICE))
+				.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+						| PowerManager.ON_AFTER_RELEASE, TAG);
 	}
 
 	@Override
@@ -78,6 +90,22 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 				mMediaPlayer.stop();
 			mMediaPlayer.release();
 		}
+	}
+
+	@Override
+	public void onResume() {
+		if (isWakeAcquire) {
+			setWakelock(true, false);
+		}
+		super.onResume();
+	}
+
+	@Override
+	public void onPause() {
+		if (isWakeAcquire) {
+			setWakelock(false, false);
+		}
+		super.onPause();
 	}
 
 	@Override
@@ -414,5 +442,27 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	// return rootView;
 	// }
 	// }
+
+	@Override
+	public void setWakelock(boolean acquire, boolean isUserOps) {
+		if (isUserOps) {
+			isWakeAcquire = acquire;
+		}
+		if (acquire) {
+			if (!mWakelock.isHeld()) {
+				mWakelock.acquire();
+				this.getActionBar().setIcon(R.drawable.ic_launcher_light);
+			}
+		} else {
+			if (mWakelock.isHeld()) {
+				mWakelock.release();
+				this.getActionBar().setIcon(R.drawable.ic_launcher);
+			}
+		}
+	}
+
+	public boolean getWakLockAcquire() {
+		return isWakeAcquire;
+	}
 
 }
