@@ -414,7 +414,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private void playFileDirection(int dir) {
 		try {
 			File files = new File(mSharedpreferences.getString(PREF_PATH, ""));
-			for (int i = 0; i < files.listFiles().length - 1; i++) {
+			for (int i = 0; i < files.listFiles().length ; i++) {
 				File file = files.listFiles()[i];
 				if (file.getName().equals(
 						mSharedpreferences.getString(PREF_HISTORY_FILE, ""))) {
