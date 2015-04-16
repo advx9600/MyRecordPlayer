@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import paul.arian.fileselector.a;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -46,14 +47,15 @@ public class BtnTouchListener implements View.OnTouchListener {
 	private String mTextLeft;
 	private boolean mWaitDouble = true;
 	private final int DOUBLE_CLICK_TIME = 200;
+	private final static int LONG_CLICK_1 = 200;
 
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 1:
-				if (mWaitDouble == false){
-					mWaitDouble=true;
+				if (mWaitDouble == false) {
+					mWaitDouble = true;
 					mCallback.onClick(mButton, null);
 				}
 				break;
@@ -95,6 +97,8 @@ public class BtnTouchListener implements View.OnTouchListener {
 		void onClick(Button btn, int[] reverseSortedPositions);
 
 		void onDoubleClick(Button btn, int[] reverseSortedPositions);
+		
+		void onLongClick1(Button btn, int[] reverseSortedPositions);
 	}
 
 	/**
@@ -184,6 +188,8 @@ public class BtnTouchListener implements View.OnTouchListener {
 		};
 	}
 
+	private long mPreDownTimeMill;
+
 	@Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
 		if (mViewWidth < 2) {
@@ -200,7 +206,7 @@ public class BtnTouchListener implements View.OnTouchListener {
 
 			// Find the child view that was touched (perform a hit test)
 			mDownView = mButton;
-
+			mPreDownTimeMill = System.currentTimeMillis();
 			if (mDownView != null) {
 				mDownX = motionEvent.getRawX();
 				mVelocityTracker = VelocityTracker.obtain();
@@ -256,12 +262,17 @@ public class BtnTouchListener implements View.OnTouchListener {
 						.setDuration(mAnimationTime).setListener(null);
 			}
 			if (!mSwiping) {
-				if (mWaitDouble == true) {
-					mWaitDouble = false;
-					new ClickJudgeThread().start();
-				} else {
-					mWaitDouble = true;
-					mCallback.onDoubleClick(mButton, null);
+				// if (mWaitDouble == true) {
+				// mWaitDouble = false;
+				// new ClickJudgeThread().start();
+				// } else {
+				// mWaitDouble = true;
+				// mCallback.onDoubleClick(mButton, null);
+				// }
+				if (System.currentTimeMillis() - this.mPreDownTimeMill > LONG_CLICK_1){
+					mCallback.onLongClick1(mButton,null);
+				}else{
+					mCallback.onClick(mButton, null);
 				}				
 			}
 			mVelocityTracker = null;

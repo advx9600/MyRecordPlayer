@@ -51,6 +51,13 @@ public class b {
 					public void onDoubleClick(Button btn,
 							int[] reverseSortedPositions) {
 						// TODO Auto-generated method stub
+//						mMainActivity.setWakelock(!mMainActivity.getWakLockAcquire(), true);
+					}
+
+					@Override
+					public void onLongClick1(Button btn,
+							int[] reverseSortedPositions) {
+						// TODO Auto-generated method stub
 						mMainActivity.setWakelock(!mMainActivity.getWakLockAcquire(), true);
 					}
 				}, btn.getContext().getString(R.string.next_song), btn
