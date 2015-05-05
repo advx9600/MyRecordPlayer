@@ -7,6 +7,7 @@ import java.util.List;
 import com.my.recordplayer.b.b;
 import com.my.recordplayer.b.c;
 import com.my.recordplayer.b.d;
+import com.my.recordplayer.b.e;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,12 +19,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -55,6 +57,10 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private WakeLock mWakelock;
 	private boolean isWakeAcquire = false;
 
+	private TelephonyManager mPhoneManager;
+
+	private Button mBtn;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,12 +79,16 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		mTextHistory.setText(mSharedpreferences
 				.getString(PREF_HISTORY_FILE, ""));
 
-		Button btn = (Button) findViewById(R.id.btn_control);
-		new b(this, btn);
+		mBtn = (Button) findViewById(R.id.btn_control);
+		new b(this, mBtn);
 
 		mWakelock = ((PowerManager) getSystemService(POWER_SERVICE))
 				.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
 						| PowerManager.ON_AFTER_RELEASE, TAG);
+
+		mPhoneManager = (TelephonyManager) this
+				.getSystemService(TELEPHONY_SERVICE);
+		mPhoneManager.listen(new e(this), PhoneStateListener.LISTEN_CALL_STATE);
 	}
 
 	@Override
@@ -177,6 +187,27 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 
 	}
 
+	public void doClick(boolean isForceControl, boolean on) {
+		if (mMediaPlayer == null) {
+			if (!isForceControl)
+				playCur();
+			return;
+		}
+		if (!isForceControl)
+			if (mMediaPlayer.isPlaying()) {
+				mMediaPlayer.pause();
+				(mBtn).setText(R.string.play);
+			} else {
+				mMediaPlayer.start();
+				(mBtn).setText(R.string.pause);
+			}
+		else {
+			if (on != mMediaPlayer.isPlaying()) {
+				doClick(false, false);
+			}
+		}
+	}
+
 	private void playFile(File file) {
 		if (file == null) {
 			return;
@@ -259,6 +290,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		int count = mListSeekBars.size();
 		// int onePer = 100 / count + (100 % count == 0 ? 0 : 1);
 		int onePer = 100 / count;
+		boolean isFirstZoomOut = false;
 
 		if ((mStatus & STATUS_ZOOM_OUT) > 0) {
 			if (mListZoom.size() == 2) {
@@ -271,6 +303,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 					zoomDur = Math.abs(val1 - val0);
 					num = smallD.getNum();
 					numProgress = smallD.getProgress();
+					isFirstZoomOut = true;
 				}
 				if (percent < zoomStart) {
 					percent = 0;
@@ -295,8 +328,14 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 				perDouble = 99.0;
 			}
 			// a.b("perDouble:" + perDouble);
-			mMediaPlayer
-					.seekTo((int) (mMediaPlayer.getDuration() * perDouble / 100));
+			if (isFirstZoomOut) {
+				if (mMediaPlayer.getCurrentPosition()*100/mMediaPlayer.getDuration() < zoomStart){
+					mMediaPlayer.seekTo((int) (mMediaPlayer.getDuration()*zoomStart / 100));
+				}
+			} else {
+				mMediaPlayer.seekTo((int) (mMediaPlayer.getDuration()
+						* perDouble / 100));
+			}
 			if (!mMediaPlayer.isPlaying()) {
 				mMediaPlayer.start();
 			}
@@ -317,11 +356,6 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 				bar.setProgress(setPer);
 			}
 		}
-	}
-
-	@Override
-	public MediaPlayer getMediaPlayer() {
-		return mMediaPlayer;
 	}
 
 	public class SeekBarHandler extends AsyncTask<Void, Void, Void> {
@@ -414,7 +448,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 	private void playFileDirection(int dir) {
 		try {
 			File files = new File(mSharedpreferences.getString(PREF_PATH, ""));
-			for (int i = 0; i < files.listFiles().length ; i++) {
+			for (int i = 0; i < files.listFiles().length; i++) {
 				File file = files.listFiles()[i];
 				if (file.getName().equals(
 						mSharedpreferences.getString(PREF_HISTORY_FILE, ""))) {

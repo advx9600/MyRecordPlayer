@@ -1,7 +1,5 @@
 package com.my.recordplayer.b;
 
-import paul.arian.fileselector.a;
-
 import com.my.recordplayer.MyAudioActivityInt;
 import com.my.recordplayer.R;
 import com.my.recordplayer.widget.BtnTouchListener;
@@ -34,17 +32,7 @@ public class b {
 					@Override
 					public void onClick(Button btn, int[] reverseSortedPositions) {
 						// TODO Auto-generated method stub
-						if (mMainActivity.getMediaPlayer() == null) {
-							mMainActivity.playCur();
-							return;
-						}
-						if (mMainActivity.getMediaPlayer().isPlaying()) {
-							mMainActivity.getMediaPlayer().pause();
-							(btn).setText(R.string.play);
-						} else {
-							mMainActivity.getMediaPlayer().start();
-							(btn).setText(R.string.pause);
-						}
+						mMainActivity.doClick(false, false);
 					}
 
 					@Override

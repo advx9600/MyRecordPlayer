@@ -1,7 +1,5 @@
 package com.my.recordplayer;
 
-import android.media.MediaPlayer;
-
 public interface MyAudioActivityInt {
 	public static final long STATUS_NORMAL = 0x1;
 	public static final long STATUS_ZOOM_OUT = (0x1 << 1);
@@ -10,7 +8,7 @@ public interface MyAudioActivityInt {
 
 	public void setPercent(int num, int per);
 
-	public MediaPlayer getMediaPlayer();
+	public void doClick(boolean isForceControl, boolean on);
 
 	public void setStatus(long status);
 	
