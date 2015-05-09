@@ -20,7 +20,14 @@ public class d {
 		this.progress = pregress;
 	}
 
-	public int calcuLatePer(int per) {
-		return per * num + per * progress / 100;
+	public int calcuLatePer(double per, boolean isStart) {
+		int val = 0;
+		if (isStart) {
+			val = (int) Math.floor(per * num + per * progress / 100);
+		} else {
+			val = (int) Math.ceil(per * num + per * progress / 100);
+			val = val > 100 ? 100 : val;
+		}
+		return val;
 	}
 }

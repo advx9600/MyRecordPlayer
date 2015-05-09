@@ -8,13 +8,14 @@ import com.my.recordplayer.b.b;
 import com.my.recordplayer.b.c;
 import com.my.recordplayer.b.d;
 import com.my.recordplayer.b.e;
+import com.my.recordplayer.widget.MyMediaPlayer;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -44,7 +45,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 
 	private static final String TAG = "MyRecordPlayer";
 
-	private MediaPlayer mMediaPlayer = null;
+	private MyMediaPlayer mMediaPlayer = null;
 	private LinearLayout mLayoutSeekBars;
 	private List<SeekBar> mListSeekBars = new ArrayList<SeekBar>();
 
@@ -71,7 +72,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		// getFragmentManager().beginTransaction()
 		// .add(R.id.container, new PlaceholderFragment()).commit();
 		// }
-
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		mSharedpreferences = getSharedPreferences(MyPREFERENCES,
 				Context.MODE_PRIVATE);
 		mLayoutSeekBars = (LinearLayout) findViewById(R.id.layout_seekbars);
@@ -196,10 +197,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		if (!isForceControl)
 			if (mMediaPlayer.isPlaying()) {
 				mMediaPlayer.pause();
-				(mBtn).setText(R.string.play);
 			} else {
 				mMediaPlayer.start();
-				(mBtn).setText(R.string.pause);
 			}
 		else {
 			if (on != mMediaPlayer.isPlaying()) {
@@ -230,7 +229,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 				mMediaPlayer.release();
 			}
 
-			mMediaPlayer = new MediaPlayer();
+			mMediaPlayer = new MyMediaPlayer();
+			mMediaPlayer.setmTextView(mBtn, R.string.play, R.string.pause);
 			mMediaPlayer.setDataSource(file.getAbsolutePath());
 			mMediaPlayer.prepare();
 			mMediaPlayer.start();
@@ -290,14 +290,14 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			int numProgress) {
 		int count = mListSeekBars.size();
 		// int onePer = 100 / count + (100 % count == 0 ? 0 : 1);
-		int onePer = 100 / count;
+		final double onePer = 100f / count;
 		boolean isFirstZoomOut = false;
 
 		if ((mStatus & STATUS_ZOOM_OUT) > 0) {
 			if (mListZoom.size() == 2) {
 				if (zoomStart == 0 && zoomDur == 100) {
-					int val0 = mListZoom.get(0).calcuLatePer(onePer);
-					int val1 = mListZoom.get(1).calcuLatePer(onePer);
+					int val0 = mListZoom.get(0).calcuLatePer(onePer,true);
+					int val1 = mListZoom.get(1).calcuLatePer(onePer,false);
 					d smallD = val0 > val1 ? mListZoom.get(1) : mListZoom
 							.get(0);
 					zoomStart = val0 > val1 ? val1 : val0;
@@ -325,10 +325,10 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			double perDouble = zoomStart
 					+ (num * onePer + (numProgress * onePer * 1.0 / 100))
 					* zoomDur / 100;
-			if (perDouble > 99.0) {
-				perDouble = 99.0;
+			 // 因为播放时不可能设置为 100(即为停止)
+			if (perDouble > 99.9999) {
+				perDouble = 99.9999;
 			}
-			// a.b("perDouble:" + perDouble);
 			if (isFirstZoomOut) {
 				if (mMediaPlayer.getCurrentPosition() * 100
 						/ mMediaPlayer.getDuration() < zoomStart) {
