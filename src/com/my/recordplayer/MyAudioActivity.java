@@ -213,6 +213,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			return;
 		}
 
+		setStatus(STATUS_NORMAL);
 		mSharedpreferences.edit().putString(PREF_PATH, file.getParent())
 				.commit();
 		mSharedpreferences.edit().putString(PREF_HISTORY_FILE, file.getName())
@@ -329,8 +330,10 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			}
 			// a.b("perDouble:" + perDouble);
 			if (isFirstZoomOut) {
-				if (mMediaPlayer.getCurrentPosition()*100/mMediaPlayer.getDuration() < zoomStart){
-					mMediaPlayer.seekTo((int) (mMediaPlayer.getDuration()*zoomStart / 100));
+				if (mMediaPlayer.getCurrentPosition() * 100
+						/ mMediaPlayer.getDuration() < zoomStart) {
+					mMediaPlayer.seekTo((int) (mMediaPlayer.getDuration()
+							* zoomStart / 100));
 				}
 			} else {
 				mMediaPlayer.seekTo((int) (mMediaPlayer.getDuration()
@@ -406,7 +409,9 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 				bit1Count++;
 			}
 		}
-		if (bit1Count > 1) {
+		if (status == STATUS_NORMAL) {
+			mStatus = status;
+		} else if (bit1Count > 1) {
 			mStatus &= status;
 		} else {
 			mStatus |= status;
