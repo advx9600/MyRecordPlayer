@@ -139,6 +139,7 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		}
 		if (id == R.id.action_zoom_in) {
 			if ((mStatus & STATUS_ALREADY_OPEN_FILE) == 0) {
+				a.b("yes here status:"+mStatus);
 				return true;
 			}
 			if ((mStatus & STATUS_ZOOM_OUT) > 0) {
@@ -248,10 +249,9 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 					mLayoutSeekBars.addView(sb, lp);
 				}
 
-				new SeekBarHandler().execute();
-
-				setStatus(STATUS_ALREADY_OPEN_FILE);
+				new SeekBarHandler().execute();				
 			}
+			setStatus(STATUS_ALREADY_OPEN_FILE);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
