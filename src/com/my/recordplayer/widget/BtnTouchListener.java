@@ -97,7 +97,7 @@ public class BtnTouchListener implements View.OnTouchListener {
 		void onClick(Button btn, int[] reverseSortedPositions);
 
 		void onDoubleClick(Button btn, int[] reverseSortedPositions);
-		
+
 		void onLongClick1(Button btn, int[] reverseSortedPositions);
 	}
 
@@ -150,7 +150,6 @@ public class BtnTouchListener implements View.OnTouchListener {
 		this(btn, callback);
 		this.mTextRight = textRight;
 		this.mTextLeft = textLeft;
-		mBtnText = btn.getText().toString();
 	}
 
 	/**
@@ -198,6 +197,7 @@ public class BtnTouchListener implements View.OnTouchListener {
 
 		switch (motionEvent.getActionMasked()) {
 		case MotionEvent.ACTION_DOWN: {
+			mBtnText = mButton.getText().toString();
 			if (mPaused) {
 				return false;
 			}
@@ -269,11 +269,11 @@ public class BtnTouchListener implements View.OnTouchListener {
 				// mWaitDouble = true;
 				// mCallback.onDoubleClick(mButton, null);
 				// }
-				if (System.currentTimeMillis() - this.mPreDownTimeMill > LONG_CLICK_1){
-					mCallback.onLongClick1(mButton,null);
-				}else{
+				if (System.currentTimeMillis() - this.mPreDownTimeMill > LONG_CLICK_1) {
+					mCallback.onLongClick1(mButton, null);
+				} else {
 					mCallback.onClick(mButton, null);
-				}				
+				}
 			}
 			mVelocityTracker = null;
 			mDownX = 0;
