@@ -1,18 +1,92 @@
-  FileSelectionActivity.java
-  
-  public static final String  EXTRA_SET_PATH="set_path";
-  
-    private void setExtraData(){
-    	String path=getIntent().getStringExtra(EXTRA_SET_PATH);
-    	if (path == null || path.length()==0){
-    		mainPath = new File(Environment.getExternalStorageDirectory()+"");
-    	}else{
-    		mainPath = new File(path);
-    	}
-    }
-    
-    
-   directoryView.setOnItemClickListener add   to direct return 
-  				 else{
-                    	ok();
-                    }
+https://github.com/paulasiimwe/Android-Multiple-file-Selector-Dialog.git
+
+diff --git a/res/layout/activity_file_selection.xml b/res/layout/activity_file_selection.xml
+index 85d7343..5b9b4b4 100644
+--- a/res/layout/activity_file_selection.xml
++++ b/res/layout/activity_file_selection.xml
+@@ -59,14 +59,14 @@
+             android:layout_weight="30" />
+ 
+     <Button
+-        android:layout_width="fill_parent"
++        android:layout_width="0dip"
+         android:layout_height="wrap_content"
+         android:text="@string/all"
+         android:id="@+id/all"
+         android:layout_weight="30" />
+ 
+         <Button
+-            android:layout_width="fill_parent"
++            android:layout_width="0dip"
+             android:layout_height="wrap_content"
+             android:text="@string/ok"
+             android:id="@+id/ok"
+
+             
+
+             
+diff --git a/src/paul/arian/fileselector/FileSelectionActivity.java b/src/paul/arian/fileselector/FileSelectionActivity.java
+index 0b5ce10..0aae527 100644
+--- a/src/paul/arian/fileselector/FileSelectionActivity.java
++++ b/src/paul/arian/fileselector/FileSelectionActivity.java
+@@ -23,6 +23,11 @@ public class FileSelectionActivity extends Activity {
+ 
+     private static final String TAG = "FileSelection";
+     private static final String FILES_TO_UPLOAD = "upload";
++    
++
++	public static final String EXTRA_SET_PATH = "set_path";
++	public static final String EXTRA_SET_FILE = "set_file";
++	
+     File mainPath = new File(Environment.getExternalStorageDirectory()+"");
+     private ArrayList<File> resultFileList;
+ 
+@@ -62,7 +67,9 @@ public class FileSelectionActivity extends Activity {
+         path = (TextView)findViewById(R.id.folderpath);
+ 
+ 
++        setExtraDataPath();
+         loadLists();
++        setExtraDataFile();
+         New.setEnabled(false);
+ 
+ 
+@@ -84,6 +91,8 @@ public class FileSelectionActivity extends Activity {
+                     if (position < directoryList.size()) {
+                         mainPath = directoryList.get(position);
+                         loadLists();
++                    }else{
++                    	ok();
+                     }
+                 }catch (Throwable e){
+                     mainPath = lastPath;
+@@ -147,6 +156,28 @@ public class FileSelectionActivity extends Activity {
+         });
+     }
+ 
++    private void setExtraDataPath() {
++		String path = getIntent().getStringExtra(EXTRA_SET_PATH);
++		if (path == null || path.length() == 0) {
++			mainPath = new File(Environment.getExternalStorageDirectory() + "");
++		} else {
++			mainPath = new File(path);
++		}
++	}
++
++	private void setExtraDataFile() {
++		String file = getIntent().getStringExtra(EXTRA_SET_FILE);
++		if (file != null && file.length() > 0) {					
++			for (int i=0;i<directoryView.getAdapter().getCount();i++){
++				String name=directoryView.getAdapter().getItem(i).toString();
++				if (name.equals(file)){
++					directoryView.setSelection(i);
++					break;
++				}
++			}
++		}
++	}
++	
+     public void onBackPressed() {
+         try {
+             if(mainPath.equals(Environment.getExternalStorageDirectory().getParentFile().getParentFile())){
+             
