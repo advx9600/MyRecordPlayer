@@ -293,6 +293,23 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 		final double onePer = 100f / count;
 		boolean isFirstZoomOut = false;
 
+		if (mMediaPlayer.getDuration() < 1 || mMediaPlayer.getDuration() > 9999999) { // error
+			a.e("reset mMediaPlayer");
+			try {
+				mMediaPlayer.reset();
+				mMediaPlayer.setDataSource(mSharedpreferences.getString(PREF_PATH, "") + "/"
+						+ mSharedpreferences.getString(PREF_HISTORY_FILE, ""));
+				mMediaPlayer.prepare();
+				mMediaPlayer.start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			setPercent(percent, isSetPlay, num, numProgress);
+			return;
+		}
+		
 		if ((mStatus & STATUS_ZOOM_OUT) > 0) {
 			if (mListZoom.size() == 2) {
 				if (zoomStart == 0 && zoomDur == 100) {
@@ -373,7 +390,8 @@ public class MyAudioActivity extends Activity implements MyAudioActivityInt {
 			// seekBar.setProgress(mMediaPlayer.getCurrentPosition());
 			// a.b("getCurrentPosition:" + mMediaPlayer.getCurrentPosition()
 			// + ",getDuration:" + mMediaPlayer.getDuration());
-			if (mMediaPlayer == null || mIsLockMediaPlayer) {
+			if (mMediaPlayer == null || mIsLockMediaPlayer || mMediaPlayer.getDuration() < 1
+					|| mMediaPlayer.getDuration() > 9999999) {				
 				return;
 			}
 			setPercent(
