@@ -14,6 +14,7 @@ public class e extends PhoneStateListener {
 	public void onCallStateChanged(int state, String incomingNumber) {
 		switch (state) {
 		case TelephonyManager.CALL_STATE_RINGING:
+		case TelephonyManager.CALL_STATE_OFFHOOK:
 			mAudio.doClick(true, false);
 			break;
 		}
